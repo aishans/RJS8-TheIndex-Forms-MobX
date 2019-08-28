@@ -1,7 +1,8 @@
 import React from "react";
-
+import { observer } from "mobx-react";
 // Components
 import BookTable from "./BookTable";
+import AddBookModal from "./AddBookModal";
 
 // Stores
 import authorStore from "./stores/authorStore";
@@ -12,7 +13,12 @@ const AuthorDetail = props => {
   const author = authorStore.getAuthorById(authorID);
   const authorName = `${author.first_name} ${author.last_name}`;
 
-  const books = author.books.map(bookID => bookStore.getBookById(bookID));
+  // const books = author.books.map(bookID => bookStore.getBookById(bookID));
+  const books = bookStore.books.filter(book => {
+    if (book.authors.find(author => author.id == authorID)) {
+      return book;
+    }
+  });
 
   return (
     <div>
@@ -25,8 +31,9 @@ const AuthorDetail = props => {
         />
       </div>
       <BookTable books={books} />
+      <AddBookModal author={author} />
     </div>
   );
 };
 
-export default AuthorDetail;
+export default observer(AuthorDetail);

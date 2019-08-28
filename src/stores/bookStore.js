@@ -6,6 +6,7 @@ const instance = axios.create({
 });
 
 class BookStore {
+  statusMessage = "";
   books = [];
 
   query = "";
@@ -14,13 +15,25 @@ class BookStore {
 
   fetchBooks = async () => {
     try {
-      const res = await instance.get(
+      const res = await axios.get(
         "https://the-index-api.herokuapp.com/api/books/"
       );
+
       const books = res.data;
       this.books = books;
       this.loading = false;
     } catch (err) {}
+  };
+
+  addBook = async newBook => {
+    try {
+      const res = await instance.post("/api/books/", newBook);
+      console.log("[BookStore.js] Return Value:", res.data);
+      this.books.push(res.data);
+      this.error = null;
+    } catch (err) {
+      this.statusMessage = err;
+    }
   };
 
   get filteredBooks() {
